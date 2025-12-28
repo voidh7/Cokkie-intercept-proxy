@@ -1,5 +1,28 @@
 import socket
 import argparse
+from prompt_toolkit import prompt
+
+def req_parse(req):
+    raw_request = req.splitlines()
+    request = list()
+
+    for header in raw_request:
+        if not header.strip():
+            continue
+
+        edit = prompt('>', default=header)
+        edit.replace('\r', '').replace('\n', '')
+
+        if not edit.strip():
+            continue
+
+        request.append(edit)
+
+    full_req = "\r\n".join(request)
+    full_req += "\r\n\r\n"
+
+    return full_req
+
 
 print(r"""
            ⡴⠚⣉⡙⠲⠦⠤⠤⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -40,7 +63,7 @@ def build_args():
 
 def interactive_edit(lines, title):
     print(f"\n--- {title} ---")
-    print("Press enter on empty line to finish\n")
+    print("Enter vazio finaliza\n")
 
     new_lines = []
     for line in lines:
@@ -80,9 +103,8 @@ while True:
     headers = request_text.split("\r\n")
 
     if args.intercept:
-        headers = interactive_edit(headers, "original request")
-        request_text = "\r\n".join(headers) + "\r\n\r\n"
-        request = request_text.encode("utf-8")
+        print(req_parse(request_text))
+
 
     host = None
     for h in headers:
@@ -91,7 +113,7 @@ while True:
             break
 
     if not host:
-        print("host not found")
+        print("host não encontrado")
         client.close()
         continue
 
@@ -106,12 +128,9 @@ while True:
                 break
 
             if args.intercept:
-                response_text = data.decode("utf-8", errors="ignore")
-                resp_lines = response_text.split("\r\n")
-
-                resp_lines = interactive_edit(resp_lines, "response")
-                response_text = "\r\n".join(resp_lines) + "\r\n\r\n"
-                client.sendall(response_text.encode("utf-8"))
+                new_data = req_parse(data.decode("utf-8"))
+                print(new_data)
+                client.sendall(new_data.encode("utf-8"))
             else:
                 client.sendall(data)
 
