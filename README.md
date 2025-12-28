@@ -1,11 +1,35 @@
-# Cokkie-intercept-proxy
-I am a cli-tool capable of creating a proxy that allows interception of http traffic.
+# Cokkie Intercept Proxy
 
-use
+Cokkie Intercept Proxy is a CLI tool that creates an HTTP proxy capable of intercepting traffic.
+
+It supports both passive and active interception modes.
+
+## Installation
+
+1-Clone the repository:
 ```bash
-python3 proxy.py #passive interception
+git clone https://github.com/voidh7/Cokkie-intercept-proxy.git && cd Cokkie-intercept-proxy
 ```
-or
+
+2-Install the dependencies:
 ```bash
-python3 proxy.py --intercept #active interception
+pip install -r requirements.txt
 ```
+## Usage
+
+### Passive interception
+
+Captures HTTP packets and displays requests and responses without modification.
+```bash
+  python3 proxy.py
+```
+### Active interception
+
+Allows modifying and forging HTTP packets and responses before forwarding them.
+```bash
+  python3 proxy.py --intercept
+```
+## Interception Modes
+
+- Passive interception: only captures packets and displays responses.
+- Active interception: allows modifying and forging packets and responses.
